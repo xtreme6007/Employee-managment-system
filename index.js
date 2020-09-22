@@ -1,6 +1,7 @@
 var mysql = require("mysql2");
 var inquirer = require("inquirer");
 const { endianness } = require("os");
+const tabel = require("console.tabel")
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -61,7 +62,89 @@ function start() {
 };
 
 function add() {
-  
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "Please enter employees name"
+      }
+    {
+        type: "input",
+        name: "role",
+        message: "Please enter employees role"
+      }
+    {
+        type: "input",
+        name: "department",
+        message: "Please enter the employees department id"
+      }
+    ])
+    .then(answers => {
+      console.log("Inserting a new employee...\n");
+      var query = connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          flavor: "Rocky Road",
+          price: 3.0,
+          quantity: 50
+        },
+        function (err, res) {
+          if (err) throw err;
+          console.log(res.affectedRows + " product inserted!\n");
+          // Call updateProduct AFTER the INSERT completes
+          updateProduct();
+        }
+      );
+    })
+    .catch(error => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+      } else {
+        // Something else when wrong
+      }
+    });
+
+
+}
+
+
+function view() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "viewAction",
+        message: "What would you like to view?",
+        choices: [
+          "Employees",
+          "Roles",
+          "Departments",
+          "View all"
+        ]
+
+      }
+    ])
+    .then(answers => {
+      switch (answers.viewAction) {
+        case "Employees":
+          viewEmployees();
+        case "Roles":
+          viewroles();
+        case "Departments":
+          viewDepartments();
+        case "View all":
+          viewAll();
+
+      }
+    })
+    .catch(error => {
+      if (error.isTtyError) {
+        // Prompt couldn't be rendered in the current environment
+      } else {
+        // Something else when wrong
+      }
+    });
 
 }
 

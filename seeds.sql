@@ -1,26 +1,14 @@
 USE employee_db;
 
 INSERT INTO department (name)
-VALUES ("John"), ("Sarah"), ("Ron");
+VALUES ("Enginner"), ("Intern"), ("Manager");
 
 
 INSERT INTO employee (title, salary, department_id, manager_id)
-VALUES ("Engineer", 80,000.00, 1, 25);
+VALUES ("Engineer", 80000.00, 1, 25), ("Intern", 40000.00, 1, 25), "Manager", 99000.00, 1, null;
 
-INSERT INTO employee (title, salary, department_id, manager_id)
-VALUES ("Intern", 40000.00, 1, 25);
-
-INSERT INTO employee (title, salary, department_id, manager_id)
-VALUES ("Manager", 99000.00, 1, null);
+INSERT INTO role (title, slary, role_id)
+VALUES ("Engineer", 80000.00, 1), ("Intern", 40000.00, 2), ("Manager", 99000.00, 3);
 
 
-
-INSERT INTO role (first_name, last_name, role_id)
-VALUES ("John", "Dee", 3);
-
-INSERT INTO role (first_name, last_name, role_id)
-VALUES ("Sarah", "Hopkins", 1);
-
-INSERT INTO role (first_name, last_name, role_id)
-VALUES ("Ron", "Nugget", 2);
 
