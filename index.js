@@ -1,7 +1,7 @@
 var mysql = require("mysql2");
 var inquirer = require("inquirer");
-const { endianness } = require("os");
-const tabel = require("console.tabel")
+const tabel = require("console.table");
+const { allowedNodeEnvironmentFlags } = require("process");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -40,22 +40,26 @@ function start() {
       }
     ])
     .then(answers => {
-      switch (action) {
+      switch (answers.action) {
         case "Add Employee":
-          add();
+          addEmployee()
+          break;
         case "View Employees":
-          view();
+          view()
+          break;
         case "Update employee role":
-          update();
+          update()
+          break;
         case "Exit":
-          stop();
+          stop()
+          break;
       }
     })
     .catch(error => {
       if (error.isTtyError) {
-        // Prompt couldn't be rendered in the current environment
+        
       } else {
-        // Something else when wrong
+        
       }
     });
 
@@ -63,21 +67,57 @@ function start() {
 
 function add() {
   inquirer
+  .prompt([
+    {
+      type: "list",
+      name: "addAction",
+      message: "What would you like to add?",
+      choices: ["Employee", "Department", "Role"]
+  }
+  ])
+  .then(answers => {
+    switch (answers.addAction) {
+      case "Employee":
+        addEmployee()
+        break;
+      case "Department":
+        addDepartment()
+        break;
+      case "Role":
+        addRole()
+        break ;
+      default: stop();
+
+    }
+  })
+
+}
+
+// if user wants to add employee
+function addEmployee() {
+  inquirer
     .prompt([
       {
         type: "input",
-        name: "name",
-        message: "Please enter employees name"
-      }
+        name: "first_name",
+        message: "Please enter employees First Name"
+      },
     {
         type: "input",
-        name: "role",
-        message: "Please enter employees role"
-      }
+        name: "last_name",
+        message: "Please enter employees Last Name"
+      },
     {
         type: "input",
-        name: "department",
-        message: "Please enter the employees department id"
+        name: "role_id",
+        message: "Please enter the employees Role ID"
+      },
+
+      {
+        type: "input",
+        name: "manager_id",
+        message: "Please enter the Manger Id Number"
+
       }
     ])
     .then(answers => {
@@ -85,15 +125,15 @@ function add() {
       var query = connection.query(
         "INSERT INTO employee SET ?",
         {
-          flavor: "Rocky Road",
-          price: 3.0,
-          quantity: 50
+          first_name: answers.first_name,
+          last_name: answers.last_name,
+          role_id: answers.role_id,
+          manager_id: answers.manager_id
         },
         function (err, res) {
           if (err) throw err;
-          console.log(res.affectedRows + " product inserted!\n");
-          // Call updateProduct AFTER the INSERT completes
-          updateProduct();
+          console.log(res.affectedRows + " Employee inserted!\n");
+          
         }
       );
     })
@@ -108,7 +148,7 @@ function add() {
 
 }
 
-
+// if user wants to view
 function view() {
   inquirer
     .prompt([
