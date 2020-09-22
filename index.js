@@ -1,6 +1,6 @@
 var mysql = require("mysql2");
 var inquirer = require("inquirer");
-const tabel = require("console.table");
+const cTabel = require("console.table");
 const { allowedNodeEnvironmentFlags } = require("process");
 
 var connection = mysql.createConnection({
@@ -186,7 +186,7 @@ function addDepartment() {
 
 }
 
-function addrole() {
+function addRole() {
   inquirer
   .prompt([
     {
@@ -216,7 +216,7 @@ function addrole() {
       {
         title: answers.title,
         salary: answers.salary,
-        department_id = answers.department_id
+        department_id: answers.department_id
 
 
       },
@@ -263,7 +263,7 @@ function view() {
         case "Employees":
           viewEmployees();
         case "Roles":
-          viewroles();
+          viewRoles();
         case "Departments":
           viewDepartments();
         case "View all":
@@ -280,5 +280,39 @@ function view() {
     });
 
 }
+// function to veiw employees
+function viewEmployees() {
+  connection.query("SELECT * FROM employee", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.table(res);
+    connection.end();
+  });
+
+}
+
+function viewRoles() {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.table(res);
+    connection.end();
+  });
+
+}
+
+function viewDepartments() {
+  connection.query("SELECT * FROM department", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.table(res);
+    connection.end();
+  });
+
+}
+
+
+
+
 
 
