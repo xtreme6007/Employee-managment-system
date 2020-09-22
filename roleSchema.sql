@@ -8,3 +8,5 @@ CREATE TABLE role (
 
   PRIMARY KEY (id)
 );
+
+SELECT * FROM role
