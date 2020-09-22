@@ -1,6 +1,6 @@
 USE employee_db;
 
-CREATE TABLE roll (
+CREATE TABLE role (
   id INT NOT NULL AUTO_INCREMENT,
    title VARCHAR(30)  NULL,
   salary DECIMAL(7,2) NULL,
@@ -8,4 +8,4 @@ CREATE TABLE roll (
   PRIMARY KEY (id)
 );
 
-SELECT * FROM employee;
+SELECT * FROM role;
