@@ -22,7 +22,7 @@ connection.connect(function (err) {
   start();
 });
 
-
+// first question prompt to see what the user wants to do
 function start() {
   inquirer
     .prompt([
@@ -31,20 +31,21 @@ function start() {
         name: "action",
         message: "What would you like to do?",
         choices: [
-          "Add Employee",
-          "View Employees",
-          "Update employe role",
+          "Add",
+          "View",
+          "Update employee role",
           "Exit"
 
         ]
       }
     ])
     .then(answers => {
+      // switch next function based on user response
       switch (answers.action) {
-        case "Add Employee":
-          addEmployee()
+        case "Add":
+          add()
           break;
-        case "View Employees":
+        case "View":
           view()
           break;
         case "Update employee role":
@@ -64,7 +65,7 @@ function start() {
     });
 
 };
-
+// if user decides to add
 function add() {
   inquirer
   .prompt([
@@ -133,9 +134,11 @@ function addEmployee() {
         function (err, res) {
           if (err) throw err;
           console.log(res.affectedRows + " Employee inserted!\n");
-          
+          start();
         }
       );
+        
+
     })
     .catch(error => {
       if (error.isTtyError) {
@@ -147,6 +150,96 @@ function addEmployee() {
 
 
 }
+
+function addDepartment() {
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      name: "newDept",
+      message: "Please enter the name of the new department"
+
+    }
+  ])
+  .then(answers => {
+    var query = connection.query(
+      "INSERT INTO department SET ?",
+      {
+        name: answers.newDept
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log(res.affectedRows + " New department inserted!\n");
+        start();
+      }
+    );
+    
+  })
+  .catch(error => {
+    if(error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+    } else {
+      // Something else when wrong
+    }
+  });
+
+
+}
+
+function addrole() {
+  inquirer
+  .prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "Please enter the title for the new role"
+
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "Please enter the salary for this role"
+
+    },
+    {
+      type: "input",
+      name: "department_id",
+      message: "Please enter the department id for this role"
+
+
+    }
+  ])
+  .then(answers => {
+
+    var query = connection.query(
+      "INSERT INTO role SET ?",
+      {
+        title: answers.title,
+        salary: answers.salary,
+        department_id = answers.department_id
+
+
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log(res.affectedRows + " New role inserted!\n");
+        start();
+      }
+    );
+    
+  })
+  .catch(error => {
+    if(error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+    } else {
+      // Something else when wrong
+    }
+  });
+
+
+}
+
+
 
 // if user wants to view
 function view() {
