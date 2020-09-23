@@ -1,7 +1,16 @@
 var mysql = require("mysql2");
 var inquirer = require("inquirer");
 const cTabel = require("console.table");
-const { allowedNodeEnvironmentFlags } = require("process");
+const { allowedNodeEnvironmentFlags, exit } = require("process");
+var figlet = require("figlet");
+var asciimo = require('asciimo').Figlet;
+var colors = require('colors'); // add colors for fun
+
+
+
+
+art();
+
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -24,6 +33,8 @@ connection.connect(function (err) {
 
 // first question prompt to see what the user wants to do
 function start() {
+  
+  
   inquirer
     .prompt([
       {
@@ -52,15 +63,15 @@ function start() {
           update()
           break;
         case "Exit":
-          stop()
+          exit()
           break;
       }
     })
     .catch(error => {
       if (error.isTtyError) {
-        
+
       } else {
-        
+
       }
     });
 
@@ -68,29 +79,29 @@ function start() {
 // if user decides to add
 function add() {
   inquirer
-  .prompt([
-    {
-      type: "list",
-      name: "addAction",
-      message: "What would you like to add?",
-      choices: ["Employee", "Department", "Role"]
-  }
-  ])
-  .then(answers => {
-    switch (answers.addAction) {
-      case "Employee":
-        addEmployee()
-        break;
-      case "Department":
-        addDepartment()
-        break;
-      case "Role":
-        addRole()
-        break ;
-      default: stop();
+    .prompt([
+      {
+        type: "list",
+        name: "addAction",
+        message: "What would you like to add?",
+        choices: ["Employee", "Department", "Role"]
+      }
+    ])
+    .then(answers => {
+      switch (answers.addAction) {
+        case "Employee":
+          addEmployee()
+          break;
+        case "Department":
+          addDepartment()
+          break;
+        case "Role":
+          addRole()
+          break;
+        default: exit();
 
-    }
-  })
+      }
+    })
 
 }
 
@@ -103,13 +114,13 @@ function addEmployee() {
         name: "first_name",
         message: "Please enter employees First Name"
       },
-    {
+      {
         type: "input",
         name: "last_name",
         message: "Please enter employees Last Name"
       },
-    {
-        type: "input",
+      {
+        type: "rawlist",
         name: "role_id",
         message: "Please enter the employees Role ID"
       },
@@ -134,17 +145,18 @@ function addEmployee() {
         function (err, res) {
           if (err) throw err;
           console.log(res.affectedRows + " Employee inserted!\n");
+          viewEmployees();
           start();
         }
       );
-        
+
 
     })
     .catch(error => {
       if (error.isTtyError) {
-        // Prompt couldn't be rendered in the current environment
+        console.log(error);
       } else {
-        // Something else when wrong
+        console.log(error);
       }
     });
 
@@ -153,88 +165,90 @@ function addEmployee() {
 
 function addDepartment() {
   inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "newDept",
-      message: "Please enter the name of the new department"
-
-    }
-  ])
-  .then(answers => {
-    var query = connection.query(
-      "INSERT INTO department SET ?",
+    .prompt([
       {
-        name: answers.newDept
-      },
-      function (err, res) {
-        if (err) throw err;
-        console.log(res.affectedRows + " New department inserted!\n");
-        start();
+        type: "input",
+        name: "newDept",
+        message: "Please enter the name of the new department"
+
       }
-    );
-    
-  })
-  .catch(error => {
-    if(error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else when wrong
-    }
-  });
+    ])
+    .then(answers => {
+      var query = connection.query(
+        "INSERT INTO department SET ?",
+        {
+          name: answers.newDept
+        },
+        function (err, res) {
+          if (err) throw err;
+          console.log(res.affectedRows + " New department inserted!\n");
+          viewDepartments();
+          start();
+        }
+      );
+
+    })
+    .catch(error => {
+      if (error.isTtyError) {
+        console.log(error);
+      } else {
+        console.log(error);
+      }
+    });
 
 
 }
 
 function addRole() {
   inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "title",
-      message: "Please enter the title for the new role"
-
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "Please enter the salary for this role"
-
-    },
-    {
-      type: "input",
-      name: "department_id",
-      message: "Please enter the department id for this role"
-
-
-    }
-  ])
-  .then(answers => {
-
-    var query = connection.query(
-      "INSERT INTO role SET ?",
+    .prompt([
       {
-        title: answers.title,
-        salary: answers.salary,
-        department_id: answers.department_id
-
+        type: "input",
+        name: "title",
+        message: "Please enter the title for the new role"
 
       },
-      function (err, res) {
-        if (err) throw err;
-        console.log(res.affectedRows + " New role inserted!\n");
-        start();
+      {
+        type: "input",
+        name: "salary",
+        message: "Please enter the salary for this role"
+
+      },
+      {
+        type: "input",
+        name: "department_id",
+        message: "Please enter the department id for this role"
+
+
       }
-    );
-    
-  })
-  .catch(error => {
-    if(error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else when wrong
-    }
-  });
+    ])
+    .then(answers => {
+
+      var query = connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: answers.title,
+          salary: answers.salary,
+          department_id: answers.department_id
+
+
+        },
+        function (err, res) {
+          if (err) throw err;
+          console.log(res.affectedRows + " New role inserted!\n");
+          viewRoles();
+          start();
+        }
+      );
+
+    })
+    .catch(error => {
+      if (error.isTtyError) {
+        console.log(error);
+      } else {
+        console.log(error);
+      }
+    });
 
 
 }
@@ -269,64 +283,107 @@ function view() {
         case "Departments":
           viewDepartments();
           break;
-        case "View all":
-          viewAll();
-          break;
+        default:
+          exit();
 
       }
     })
     .catch(error => {
       if (error.isTtyError) {
-        // Prompt couldn't be rendered in the current environment
+        console.log(error);
       } else {
-        // Something else when wrong
+        console.log(error);
       }
     });
 
 }
 // function to veiw employees
 function viewEmployees() {
-  connection.query("SELECT employee.first_name, employee.last_name, employee.id, role.title, role.salary, role.department_id FROM employee INNER JOIN role on employee.role_id = role.id;", function(err, res) {
+  connection.query("SELECT employee.first_name, employee.last_name, employee.id, role.title, role.salary, role.department_id FROM employee INNER JOIN role on employee.role_id = role.department_id;", function (err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.table(res);
-    
+    start();
+
   });
 
 }
 // if user wants to view what roles
 function viewRoles() {
-  connection.query("SELECT * FROM role", function(err, res) {
+  connection.query("SELECT * FROM role", function (err, res) {
     //if (err) throw err;
-    
+
     console.table(res);
-    
+    start()
+
   });
 
 }
 
 function viewDepartments() {
-  connection.query("SELECT * FROM department", function(err, res) {
+  connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
-    
+
     console.table(res);
-    connection.end();
+    start();
   });
 
 }
 
 function viewAll() {
-  connection.query("SELECT * FROM department", function(err, res) {
+  connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.table(res);
-    connection.end();
+    start();
+  });
+
+}
+ 
+function art() {
+  var font = 'larry3d';
+// set text we are writeing to turn into leet ascii art
+var text = "Welcome";
+
+  asciimo.write(text, font, function(art){
+    console.log(art.green);
+    
+  });
+}
+
+function update() {
+
+ 
+  connection.query("SELECT first_name FROM employee", function (err, res) {
+    if (err) throw err;
+    console.log(res);
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"employee",
+        message: "Please select employee to update",
+        choices: res.map(emp => emp.first_name)
+      }
+    ])
+    .then(answers => {
+      
+
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+    
+
   });
 
 
 }
-
-
 
 
 
