@@ -262,12 +262,16 @@ function view() {
       switch (answers.viewAction) {
         case "Employees":
           viewEmployees();
+          break;
         case "Roles":
           viewRoles();
+          break;
         case "Departments":
           viewDepartments();
+          break;
         case "View all":
           viewAll();
+          break;
 
       }
     })
@@ -282,21 +286,21 @@ function view() {
 }
 // function to veiw employees
 function viewEmployees() {
-  connection.query("SELECT * FROM employee", function(err, res) {
+  connection.query("SELECT employee.first_name, employee.last_name, employee.id, role.title, role.salary, role.department_id FROM employee INNER JOIN role on employee.role_id = role.id;", function(err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.table(res);
-    connection.end();
+    
   });
 
 }
-
+// if user wants to view what roles
 function viewRoles() {
   connection.query("SELECT * FROM role", function(err, res) {
-    if (err) throw err;
-    // Log all results of the SELECT statement
+    //if (err) throw err;
+    
     console.table(res);
-    connection.end();
+    
   });
 
 }
@@ -304,12 +308,25 @@ function viewRoles() {
 function viewDepartments() {
   connection.query("SELECT * FROM department", function(err, res) {
     if (err) throw err;
-    // Log all results of the SELECT statement
+    
     console.table(res);
     connection.end();
   });
 
 }
+
+function viewAll() {
+  connection.query("SELECT * FROM department", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.table(res);
+    connection.end();
+  });
+
+
+}
+
+
 
 
 
