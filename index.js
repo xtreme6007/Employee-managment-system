@@ -329,16 +329,6 @@ function viewDepartments() {
   });
 
 }
-
-function viewAll() {
-  connection.query("SELECT * FROM department", function (err, res) {
-    if (err) throw err;
-    // Log all results of the SELECT statement
-    console.table(res);
-    start();
-  });
-
-}
  
 function art() {
   var font = 'larry3d';
@@ -356,7 +346,6 @@ function update() {
  
   connection.query("SELECT first_name FROM employee", function (err, res) {
     if (err) throw err;
-    console.log(res);
 
     inquirer
     .prompt([
@@ -368,8 +357,9 @@ function update() {
       }
     ])
     .then(answers => {
-      
-
+      findRole(answers.employee);
+      start();
+  
     })
     .catch(error => {
       if(error.isTtyError) {
@@ -383,7 +373,49 @@ function update() {
   });
 
 
+} 
+
+function findRole(name) {
+  connection.query("SELECT department_id  FROM role", function (err, res) {
+    if (err) throw err;
+    console.log(res);
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"role",
+        message: "Please select desired role to update",
+        choices: res.map(role => role.department_id)
+      }
+    ])
+    .then(answers => {let sql = "UPDATE employee SET role_id = ? WHERE first_name = ?";
+    let role = parseInt(answers.role);
+    let data = [role, name];
+
+// execute the UPDATE statement
+connection.query(sql, data, (error, results, fields) => {
+if (error){
+return console.error(error.message);
 }
+
+});
+      
+
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+  });
+}
+
+
+
+
 
 
 
