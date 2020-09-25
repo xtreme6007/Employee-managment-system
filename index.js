@@ -429,10 +429,10 @@ function remove() {
           fireWho()
           break;
         case "Department":
-          removeDepartment()
+          findDepartment()
           break;
         case "Role":
-          removeRole()
+          findRole()
           break;
         default: exit();
 
@@ -487,6 +487,86 @@ function fireWho() {
     });
   });
 }
+
+
+function removeDep(oldDep) {
+  
+  console.log("Promoting Employee to customer\n");
+  connection.query(
+    "DELETE FROM department WHERE ?",
+    {
+      name: oldDep
+    },
+    function(err, res) {
+      if (err) throw err;
+      console.log("Department removed!\n");
+      start();
+     
+    }
+  );
+}
+
+
+
+function findDepartment() {
+
+  connection.query("SELECT name FROM department", function (err, res) {
+    if (err) throw err;
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"oldDep",
+        message: "Please select Department to remove",
+        choices: res.map(dep => dep.name)
+      }
+    ])
+    .then(answers => {
+      removeDep(answers.oldDep);
+      
+  
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+  });
+}
+
+
+function findRole() {
+
+  connection.query("SELECT title FROM role", function (err, res) {
+    if (err) throw err;
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"exEmployee",
+        message: "Please select employee to Fire",
+        choices: res.map(emp => emp.first_name)
+      }
+    ])
+    .then(answers => {
+      removeEmployee(answers.exEmployee)
+      
+  
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+  });
+}
+
 
 
 
