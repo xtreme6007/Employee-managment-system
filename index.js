@@ -5,12 +5,8 @@ const { allowedNodeEnvironmentFlags, exit } = require("process");
 var figlet = require("figlet");
 var asciimo = require('asciimo').Figlet;
 var colors = require('colors'); // add colors for fun
-
-
-
-
+const { firebrick } = require("color-name");
 art();
-
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -45,6 +41,7 @@ function start() {
           "Add",
           "View",
           "Update employee role",
+          "Delete",
           "Exit"
 
         ]
@@ -62,6 +59,9 @@ function start() {
         case "Update employee role":
           update()
           break;
+          case "Delete":
+          remove()
+            break;
         case "Exit":
           exit()
           break;
@@ -411,6 +411,77 @@ return console.error(error.message);
       }
     });
   });
+}
+
+function remove() {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "removeAction",
+        message: "What would you like to remove?",
+        choices: ["Employee", "Department", "Role"]
+      }
+    ])
+    .then(answers => {
+      switch (answers.addAction) {
+        case "Employee":
+          fireWho()
+          break;
+        case "Department":
+          removeDepartment()
+          break;
+        case "Role":
+          removeRole()
+          break;
+        default: exit();
+
+      }
+    })
+
+}
+
+function fireWho() {
+
+  connection.query("SELECT first_name FROM employee", function (err, res) {
+    if (err) throw err;
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"exEmployee",
+        message: "Please select employee to Fire",
+        choices: res.map(emp => emp.first_name)
+      }
+    ])
+    .then(answers => {
+      removeEmployee(answers.exEmployee)
+      start();
+  
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+    
+
+  });
+
+
+
+
+
+}
+
+function removeEmployee(exEmployee) {
+
+
+
+  
 }
 
 
