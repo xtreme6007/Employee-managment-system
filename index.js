@@ -7,7 +7,7 @@ var asciimo = require('asciimo').Figlet;
 var colors = require('colors'); // add colors for fun
 const { firebrick } = require("color-name");
 art();
-
+// Create conectection variable
 var connection = mysql.createConnection({
   host: "localhost",
 
@@ -162,7 +162,7 @@ function addEmployee() {
 
 
 }
-
+// if user wants to add department
 function addDepartment() {
   inquirer
     .prompt([
@@ -174,6 +174,7 @@ function addDepartment() {
       }
     ])
     .then(answers => {
+      // creat query connection to insert in to table
       var query = connection.query(
         "INSERT INTO department SET ?",
         {
@@ -198,7 +199,7 @@ function addDepartment() {
 
 
 }
-
+// if user wants to add role
 function addRole() {
   inquirer
     .prompt([
@@ -223,7 +224,7 @@ function addRole() {
       }
     ])
     .then(answers => {
-
+// query data for inserting role into data
       var query = connection.query(
         "INSERT INTO role SET ?",
         {
@@ -267,6 +268,7 @@ function view() {
           "Employees",
           "Roles",
           "Departments",
+          "Total total utilized budget",
           "View all"
         ]
 
@@ -282,6 +284,9 @@ function view() {
           break;
         case "Departments":
           viewDepartments();
+          break;
+          case "Total total utilized budget":
+          viewBudget();
           break;
         default:
           exit();
@@ -412,7 +417,7 @@ return console.error(error.message);
     });
   });
 }
-
+// if user wants remove
 function remove() {
   inquirer
     .prompt([
@@ -440,7 +445,7 @@ function remove() {
     })
 
 }
-
+// if user wants to remove employee
 function removeEmployee(exEmployee) {
   
   console.log("Promoting Employee to customer\n");
@@ -458,9 +463,9 @@ function removeEmployee(exEmployee) {
   );
 }
 
-
+// if employee wants to remove employe from database
 function fireWho() {
-
+// query to select from table in order to generate employees as choices
   connection.query("SELECT first_name FROM employee", function (err, res) {
     if (err) throw err;
 
@@ -488,10 +493,10 @@ function fireWho() {
   });
 }
 
-
+// if user wants to delete a department
 function removeDep(oldDep) {
   
-  console.log("Promoting Employee to customer\n");
+  console.log("Deleting department\n");
   connection.query(
     "DELETE FROM department WHERE ?",
     {
@@ -507,7 +512,7 @@ function removeDep(oldDep) {
 }
 
 
-
+// function to find departments and list them as choices for inquierer
 function findDepartment() {
 
   connection.query("SELECT name FROM department", function (err, res) {
@@ -538,6 +543,26 @@ function findDepartment() {
 }
 
 
+// function to remove role from database
+function removeRole(oldRole) {
+  
+  console.log("Removing role!\n");
+  // query to delete
+  connection.query(
+    "DELETE FROM role WHERE ?",
+    {
+      title: oldRole
+    },
+    function(err, res) {
+      if (err) throw err;
+      console.log("Role removed!\n");
+      start();
+     
+    }
+  );
+}
+
+// function to find roles and and present them as choices for inquirer
 function findRole() {
 
   connection.query("SELECT title FROM role", function (err, res) {
@@ -547,13 +572,13 @@ function findRole() {
     .prompt([
       {
         type: "list",
-        name:"exEmployee",
-        message: "Please select employee to Fire",
-        choices: res.map(emp => emp.first_name)
+        name:"oldrole",
+        message: "Please select roll to remove",
+        choices: res.map(role => role.title)
       }
     ])
     .then(answers => {
-      removeEmployee(answers.exEmployee)
+      removeRole(answers.oldRole)
       
   
     })
@@ -565,6 +590,23 @@ function findRole() {
       }
     });
   });
+}
+
+// function to view total budget of all emplyoees.
+function viewBudget() {
+// query to grab and add salraies for all employees currently in database and return the sum.
+  connection.query(
+    "SELECT SUM(salary) FROM employee INNER JOIN role on employee.role_id = role.department_id",
+    
+    function(err, res) {
+      if (err) throw err;
+      console.table(res);
+      start();
+    }
+  );
+
+
+
 }
 
 
