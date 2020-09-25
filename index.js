@@ -120,7 +120,7 @@ function addEmployee() {
         message: "Please enter employees Last Name"
       },
       {
-        type: "rawlist",
+        type: "input",
         name: "role_id",
         message: "Please enter the employees Role ID"
       },
@@ -424,7 +424,7 @@ function remove() {
       }
     ])
     .then(answers => {
-      switch (answers.addAction) {
+      switch (answers.removeAction) {
         case "Employee":
           fireWho()
           break;
@@ -440,6 +440,24 @@ function remove() {
     })
 
 }
+
+function removeEmployee(exEmployee) {
+  
+  console.log("Promoting Employee to customer\n");
+  connection.query(
+    "DELETE FROM employee WHERE ?",
+    {
+      first_name: exEmployee
+    },
+    function(err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " Employee is now a Consumer!\n");
+      start();
+     
+    }
+  );
+}
+
 
 function fireWho() {
 
@@ -457,7 +475,7 @@ function fireWho() {
     ])
     .then(answers => {
       removeEmployee(answers.exEmployee)
-      start();
+      
   
     })
     .catch(error => {
@@ -477,12 +495,11 @@ function fireWho() {
 
 }
 
-function removeEmployee(exEmployee) {
 
 
 
-  
-}
+
+
 
 
 
