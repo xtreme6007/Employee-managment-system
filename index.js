@@ -6,18 +6,14 @@ var figlet = require("figlet");
 var asciimo = require('asciimo').Figlet;
 var colors = require('colors'); // add colors for fun
 const { firebrick } = require("color-name");
+
+
 art();
 // Create conectection variable
 var connection = mysql.createConnection({
   host: "localhost",
-
-  // Your port; if not 3306
   port: process.env.PORT || 3306,
-
-  // Your username
   user: "root",
-
-  // Your password
   password: "",
   database: "employee_db"
 });
@@ -608,20 +604,3 @@ function viewBudget() {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
