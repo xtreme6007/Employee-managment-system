@@ -141,7 +141,7 @@ function addEmployee() {
         function (err, res) {
           if (err) throw err;
           console.log(res.affectedRows + " Employee inserted!\n");
-          viewEmployees();
+          
           start();
         }
       );
@@ -179,7 +179,7 @@ function addDepartment() {
         function (err, res) {
           if (err) throw err;
           console.log(res.affectedRows + " New department inserted!\n");
-          viewDepartments();
+          
           start();
         }
       );
@@ -227,13 +227,10 @@ function addRole() {
           title: answers.title,
           salary: answers.salary,
           department_id: answers.department_id
-
-
-        },
+         },
         function (err, res) {
           if (err) throw err;
           console.log(res.affectedRows + " New role inserted!\n");
-          viewRoles();
           start();
         }
       );
@@ -246,8 +243,6 @@ function addRole() {
         console.log(error);
       }
     });
-
-
 }
 
 
@@ -358,8 +353,8 @@ function update() {
       }
     ])
     .then(answers => {
-      findRole(answers.employee);
-      start();
+      changeRole(answers.employee);
+      
   
     })
     .catch(error => {
@@ -376,7 +371,7 @@ function update() {
 
 } 
 
-function findRole(name) {
+function changeRole(name) {
   connection.query("SELECT department_id  FROM role", function (err, res) {
     if (err) throw err;
     console.log(res);
@@ -399,7 +394,7 @@ connection.query(sql, data, (error, results, fields) => {
 if (error){
 return console.error(error.message);
 }
-
+  
 });
       
 
@@ -412,6 +407,7 @@ return console.error(error.message);
       }
     });
   });
+  start()
 }
 // if user wants remove
 function remove() {
