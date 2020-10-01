@@ -340,7 +340,7 @@ var text = "Welcome";
 function update() {
 
  
-  connection.query("SELECT first_name FROM employee", function (err, res) {
+  connection.query("SELECT first_name, id FROM employee", function (err, res) {
     if (err) throw err;
 
     inquirer
@@ -349,7 +349,7 @@ function update() {
         type: "list",
         name:"employee",
         message: "Please select employee to update",
-        choices: res.map(emp => emp.first_name)
+        choices: res.map(emp => emp.id + " " + emp.first_name)
       }
     ])
     .then(answers => {
