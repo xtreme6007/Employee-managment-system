@@ -444,7 +444,7 @@ function removeEmployee(exEmployee) {
   connection.query(
     "DELETE FROM employee WHERE ?",
     {
-      first_name: exEmployee
+      id: exEmployee
     },
     function(err, res) {
       if (err) throw err;
@@ -458,7 +458,7 @@ function removeEmployee(exEmployee) {
 // if employee wants to remove employe from database
 function fireWho() {
 // query to select from table in order to generate employees as choices
-  connection.query("SELECT first_name FROM employee", function (err, res) {
+  connection.query("SELECT id, first_name FROM employee", function (err, res) {
     if (err) throw err;
 
     inquirer
@@ -467,7 +467,7 @@ function fireWho() {
         type: "list",
         name:"exEmployee",
         message: "Please select employee to Fire",
-        choices: res.map(emp => emp.first_name)
+        choices: res.map(emp => emp.id + " " + emp.first_name)
       }
     ])
     .then(answers => {
