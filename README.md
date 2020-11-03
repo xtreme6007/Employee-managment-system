@@ -7,7 +7,7 @@
   
 
   ## Description 
-  * This application is designed to track add delete and date employees, roles, and departments for your buisness.
+  * This application is designed to track add delete and update employees, roles, and departments for your buisness.
 
 
 
